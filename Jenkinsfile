@@ -5,7 +5,7 @@ node {
   stage 'Build'
   	sh 'mvn -f employees-app clean install'
   stage 'Start App'
-	dir('target'){
+	dir('employees-app/target'){
 		sh 'java -jar employees-app-1.0-SNAPSHOT-jar-with-dependencies.jar'
         } 	 
 }
