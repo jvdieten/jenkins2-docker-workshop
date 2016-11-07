@@ -14,7 +14,7 @@ public class Main {
         String contextPath = "/" ;
         String appBase = ".";
         Tomcat tomcat = new Tomcat();   
-        tomcat.setPort(Integer.valueOf(PORT.orElse("8080") ));
+        tomcat.setPort(Integer.valueOf(PORT.orElse("9000") ));
         tomcat.setHostname(HOSTNAME.orElse("localhost"));
         tomcat.getHost().setAppBase(appBase);
         tomcat.addWebapp(contextPath, appBase);
