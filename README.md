@@ -23,7 +23,7 @@ In admin screen click cancel because all plugins we need are installed via our p
 
 Click **new Item** in the main menu and select Pipeline as Project.
 
-```node {
+`node {
    def mvnHome
    stage('Preparation') { // for display purposes
       git 'https://github.com/jvdieten/jenkins2-docker-workshop.git'
@@ -40,4 +40,4 @@ Click **new Item** in the main menu and select Pipeline as Project.
    //Release
    
 }
-```
+`
