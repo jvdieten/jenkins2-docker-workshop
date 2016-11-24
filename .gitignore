@@ -1,3 +1,6 @@
 employees-app/.idea/
 employees-app/employees-app.iml
+employees-app/target/
 .idea/
+employees-app/src/test/employee-app-test.iml
+employees-app/src/test/target
