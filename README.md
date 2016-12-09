@@ -6,39 +6,85 @@ have a look in the docker README.
 
 If you just want to play with the new Jenkins you can grab the docker image from here:
 
-**To Pull Image**
+
+###Exercise0
+
+**To Pull Image From Docker**
 
 `docker pull jvdieten/alpine-jenkins2`
 
 **To Start Container**
 
-`docker run -d -p 9000:9000 -p 8080:8080 -v <local mount dir>:/var/jenkins_home 
+`docker run -d -p 9000:9000 -p 8080:8080 --env JAVA_OPTS=-Djenkins.install.runSetupWizard=false -v <local mount dir>:/var/jenkins_home 
 jvdieten/alpine-jenkins2:latest `
 
 
-###Exercise
+###Exercise1
 
-Go to < DockerIP >:8080 Fetch password from container log output, fill in and unlock. 
-In admin screen click cancel because all plugins we need are installed via our plugins.txt
 
-Click **new Item** in the main menu and select Pipeline as Project.
+Click **new Item** in the main menu and select Pipeline as Project. Fill in the comments
 
 ```
 node {
-   def mvnHome
-   stage('Preparation') { // for display purposes
-      git 'https://github.com/jvdieten/jenkins2-docker-workshop.git'
-   }
+
+    
+   stage 'Preparation' 
    
+   //Set discard old builds max 3 items max 3 days HINT look in Pipeline Syntax
+
+   git 'https://github.com/jvdieten/jenkins2-docker-workshop.git'
+   
+   stage 'Build'
+
    //Build the employees app
    
-   //Run the employees app
+   stage 'Start App'
    
-   //E2E Test the employees app
+   dir('employees-app/target'){
+    sh 'nohup java -jar employees-app-1.0-SNAPSHOT-jar-with-dependencies.jar & echo $! > pid.txt'
+   }
    
-   //Archive Results
+   stage 'Monkey Test'
    
-   //Release
+   input 'Ready to go?'
+
+   stage 'Destroy App'
    
+   dir('employees-app/target'){
+    sh 'kill -9 $(cat pid.txt)'
+   } 
+      
 }
 ```
+
+###Exercise2
+
+Because we are not monkey Testers we are going to replace the Monkey Test stage from pipeline script above with a automated e2e test. 
+For this we will setup a selenium hub grid with docker and integrate E2E test (located in the employees-app/src/test folder) into your pipeline. Solve the comments.
+
+
+We create a docker network to be able to communicate between containers jenkins/hub/node
+
+```
+docker network create my-fancy-network
+```
+
+Run the selenium hub
+
+```
+docker run -d -P --net=my-fancy-network --net-alias=hub --name=hub selenium/hub
+```
+
+Run the seleniumm phantomjs node
+```
+docker run -d --net=my-fancy-network --net-alias=node --name=node akeem/selenium-node-phantomjs
+```
+//Add the jenkins container to our my-fancy-network
+
+To run the tests 
+
+```
+sh 'mvn -f employees-app/src/test verify -Dwebdriver.remote.url=http://hub:4444/wd/hub -Dwebdriver.remote.driver=phantomjs'
+```
+
+//Publish the results of the test HINT html publisher plugin
