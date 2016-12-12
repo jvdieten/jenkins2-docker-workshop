@@ -83,8 +83,8 @@ docker run -d --net=my-fancy-network --net-alias=node --name=node akeem/selenium
 Remove jenkins container and spin up again
 ```
 docker run -d --net=my-fancy-network --net-alias=jenkins --name=jenkins -p 9000:9000 -p 8080:8080 --env JAVA_OPTS=-Djenkins.install.runSetupWizard=false -v /tmp/jenkins_home:/var/jenkins_home jvdieten/alpine-jenkins2:latest
-To run the tests 
 ```
+To run the tests 
 
 ```
 sh 'mvn -f employees-app/src/test verify -Dwebdriver.remote.url=http://hub:4444/wd/hub -Dwebdriver.remote.driver=phantomjs'
